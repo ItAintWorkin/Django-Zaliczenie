@@ -1,29 +1,50 @@
+ERROR_CORRECTION = {
+    'L': 0, 'l': 0,
+    'M': 1, 'm': 1,
+    'Q': 2, 'q': 2,
+    'H': 3, 'h': 3
+}
+
+
 class QRCode:
 
-    def __init__(self, data: str):
-        if len(data) > 19:
-            raise NotImplementedError("QR codes with text up to 19 is only supported for now")
+    def __init__(self, data: str, version: int, mask: int):
 
-        self.__version = 1  # for now let's just use the smallest  size TODO: implement other versions
-        self.__mask = 1
-        self.__error_correction = "L"
+        self.__version = version
+        self.__mask = mask
+        self.__error_correction = ERROR_CORRECTION['M']
+        self.__mode = 0b0100  # 0b0100 represents byte mode TODO: implement other modes
         self.data = data
         self.matrix = [[None for _ in range(self.get_width())] for _ in range(self.get_width())]
 
         self.__insert_function_patterns()
 
         codewords = self.__Codewords()
-        codewords.append(bytearray([4]), 4)  # 0b0100 represents byte mode TODO: implement other modes
-        codewords.append(bytearray([len(data)]),
-                         8)  #  Table 3 - For byte mode and versions 1-9 the bit count is 8 TODO: implement other modes and versions
+        codewords.append(bytearray([self.__mode]), 4)
+        codewords.append(bytearray([len(data)]), self.__get_character_count_length())
         codewords.append(bytearray(data.encode(encoding="ascii")), len(data) * 8)
-        codewords.pad_bytes(26 - self.__get_number_of_error_correction_codewords())
-        codewords.append(self.__get_error_correction_codewords(codewords, 26),
-                         self.__get_number_of_error_correction_codewords() * 8)
-
+        codewords.pad_bytes(self.__get_capacity() - self.__get_eccw_count())
+        codewords.append(self.__get_error_correction_codewords(codewords, self.__get_capacity()),
+                         self.__get_eccw_count() * 8)
         self.__insert_format_information()
         self.__populate_matrix(codewords)
+
+        fill = [1, 0]
+        while fill is not None:
+            fill = self.__put_module(fill, 0)
+
         self.__apply_mask()
+        self.__insert_alignment_patterns()  #  TODO: think of a way to avoid masking it without redrawing
+
+    def __get_character_count_length(self):
+        if self.__mode == 0b0001:  # numeric mode
+            return 10 if self.__version < 10 else 12 if self.__version < 27 else 14
+        if self.__mode == 0b0010:  # alphanumeric mode
+            return 9 if self.__version < 10 else 11 if self.__version < 27 else 13
+        if self.__mode == 0b0100:  # byte mode
+            return 8 if self.__version < 10 else 16
+        if self.__mode == 0b0010:  # kanji mode
+            return 8 if self.__version < 10 else 10 if self.__version < 27 else 12
 
     def __insert_function_patterns(self):
         self.__insert_finder_patterns()
@@ -59,21 +80,34 @@ class QRCode:
     def __insert_alignment_patterns(self):
         if self.__version == 1:
             return
-        raise NotImplementedError("Alignment patterns not implemented for QR versions bigger than 1")
+        grid_size = self.__version // 7 + 2
+        spacing = (self.get_width() - 12) // (grid_size - 1)
+        for x in range(grid_size):
+            for y in range(grid_size):
+                if x == 0 and y == 0:
+                    continue
+                if x == grid_size - 1 and y == 0:
+                    continue
+                if x == 0 and y == grid_size - 1:
+                    continue
+                for i in range(-2, 3):
+                    for j in range(-2, 3):
+                        self.matrix[5 + x * spacing + i][5 + y * spacing + j] = 1 if (
+                                    i == -2 or i == 2 or j == -2 or j == 2 or (i == 0 and j == 0)) else 0
 
     def __insert_format_information(self):
         format_information = []
         match self.__error_correction:
-            case 'l' | 'L':
+            case 0:
                 format_information.append(0)
                 format_information.append(1)
-            case 'm' | 'M':
+            case 1:
                 format_information.append(0)
                 format_information.append(0)
-            case 'q' | 'Q':
+            case 2:
                 format_information.append(1)
                 format_information.append(1)
-            case 'h' | 'H':
+            case 3:
                 format_information.append(1)
                 format_information.append(0)
         format_information.append((self.__mask >> 2) & 1)
@@ -177,24 +211,65 @@ class QRCode:
 
         return out
 
-    def __get_number_of_error_correction_codewords(self):
-        if self.__version == 1:
-            match self.__error_correction:
-                case 'l' | 'L':
-                    return 7
-                case 'm' | 'M':
-                    return 10
-                case 'q' | 'Q':
-                    return 13
-                case 'h' | 'H':
-                    return 17
-        else:
-            raise NotImplementedError("QR code version 1 is only supported")
+    def __get_capacity(self):
+        TABLE_9 = [0, 26, 44, 70, 100, 134, 172, 196, 242, 292, 346, 404, 466, 532, 581, 655, 733, 815, 901, 991, 1085,
+                   1156, 1258, 1364, 1474, 1588, 1706, 1828, 1921, 2051, 2185, 2323, 2465, 2611, 2761, 2876, 3034, 3196,
+                   3362, 3532, 3706]
+        return TABLE_9[self.__version]
+
+    def __get_eccw_count(self):
+        """
+        :returns: Number of error correction codewords
+        """
+        TABLE_9 = [
+            [],
+            [7, 10, 13, 17],
+            [10, 16, 22, 28],
+            [15, 26, 36, 44],
+            [20, 36, 52, 64],
+            [26, 48, 72, 88],
+            [36, 64, 96, 112],
+            [40, 72, 108, 130],
+            [48, 88, 132, 156],
+            [60, 110, 160, 192],
+            [72, 130, 192, 224],
+            [80, 150, 224, 264],
+            [96, 176, 260, 308],
+            [104, 198, 288, 352],
+            [120, 216, 320, 384],
+            [132, 240, 360, 432],
+            [144, 280, 408, 480],
+            [168, 308, 448, 532],
+            [180, 338, 504, 588],
+            [196, 364, 546, 650],
+            [224, 416, 600, 700],
+            [224, 442, 644, 750],
+            [252, 476, 690, 816],
+            [270, 504, 750, 900],
+            [300, 560, 810, 960],
+            [312, 588, 870, 1050],
+            [336, 644, 952, 1110],
+            [360, 700, 1020, 1200],
+            [390, 728, 1050, 1260],
+            [420, 784, 1140, 1350],
+            [450, 812, 1200, 1440],
+            [480, 868, 1290, 1530],
+            [510, 924, 1350, 1620],
+            [540, 980, 1440, 1710],
+            [570, 1036, 1530, 1800],
+            [570, 1064, 1590, 1890],
+            [600, 1120, 1680, 1980],
+            [630, 1204, 1770, 2100],
+            [660, 1260, 1860, 2220],
+            [720, 1316, 1950, 2310],
+            [750, 1372, 2040, 2430]
+        ]
+        return TABLE_9[self.__version][self.__error_correction]
 
     def get_width(self):
         return 17 + 4 * self.__version
 
-    def __is_in_functional_patterns(self, x:int, y:int):
+    def __is_in_functional_patterns(self, x: int, y: int):
         """
         Checks if module at (x,y) is a part of functional_patterns. The left upper corner has coordinates of (0,0)
         """
@@ -339,4 +414,4 @@ class QRCode:
         return poly_rem(message_poly, get_generator_poly(degree))
 
 
-print(QRCode("Hello World!"))
+print(QRCode("Hello World!", 2, 0b0100))
