@@ -1,0 +1,20 @@
+{% include 'navbar.html' %}
+{% load static %}
+
+<title>QR Generator</title>
+
+<body>
+    <div class="poleqr">
+        <div class="left">
+            <label for="poleqr" style="font-family: cursive;">Wpisz tekst</label>
+            <textarea class="pole_wpisywania" rows="1"></textarea>
+            <a class="guzik_generator">Wygeneruj kod QR</a>
+        </div>
+        
+        <div class="right">
+            <label for="wynikqr" style="font-family: cursive;"></label>
+            <box>placeholder na wygenerowany kod QR</box>
+
+        </div>
+    </div>
+</body>
