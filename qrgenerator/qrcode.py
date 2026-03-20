@@ -8,21 +8,72 @@ ERROR_CORRECTION = {
 
 class QRCode:
 
-    def __init__(self, data: str, version: int, mask: int):
+    def __init__(self, data: str):
 
-        self.__version = version
-        self.__mask = mask
+        self.__mask = 2
         self.__error_correction = ERROR_CORRECTION['M']
         self.__mode = 0b0100  # 0b0100 represents byte mode TODO: implement other modes
         self.data = data
-        self.matrix = [[None for _ in range(self.get_width())] for _ in range(self.get_width())]
+        self.__version = self.get_minimal_version()
+        self.__matrix = [[None for _ in range(self.get_width())] for _ in range(self.get_width())]
 
+    def get_minimal_version(self):
+        if self.__mode != 0b0100:
+            raise NotImplementedError("can't get minimal version of modes different than byte(0b0100)")
+        TABLE_7_BYTE = [[],
+                        [17, 14, 11, 7],
+                        [32, 26, 20, 14],
+                        [53, 42, 32, 24],
+                        [78, 62, 46, 34],
+                        [106, 84, 60, 34],
+                        [134, 106, 74, 58],
+                        [154, 122, 86, 64],
+                        [192, 152, 108, 84],
+                        [230, 180, 130, 98],
+                        [271, 213, 151, 119],
+                        [321, 251, 177, 137],
+                        [367, 287, 203, 155],
+                        [425, 331, 241, 177],
+                        [458, 362, 258, 194],
+                        [520, 412, 292, 220],
+                        [586, 450, 322, 250],
+                        [644, 504, 364, 280],
+                        [718, 560, 394, 310],
+                        [792, 624, 442, 338],
+                        [858, 666, 482, 382],
+                        [929, 711, 509, 403],
+                        [1003, 779, 565, 439],
+                        [1091, 857, 611, 461],
+                        [1171, 911, 661, 511],
+                        [1273, 997, 715, 535],
+                        [1367, 1059, 751, 593],
+                        [1465, 1125, 805, 625],
+                        [1528, 1190, 868, 658],
+                        [1628, 1264, 908, 698],
+                        [1732, 1370, 982, 742],
+                        [1840, 1452, 1030, 790],
+                        [1952, 1538, 1112, 842],
+                        [2068, 1628, 1168, 898],
+                        [2188, 1722, 1228, 958],
+                        [2303, 1809, 1283, 983],
+                        [2431, 1911, 1351, 1051],
+                        [2563, 1989, 1423, 1093],
+                        [2699, 2099, 1499, 1139],
+                        [2809, 2213, 1579, 1219],
+                        [2953, 2331, 1663, 1273],
+                        ]
+        for i in range(1, 7):
+            if len(self.data) < TABLE_7_BYTE[i][self.__error_correction]:
+                return i
+        raise NotImplementedError(
+            "qrcodes for version 7 and higher require Version Information (7.10) which is not implemented")
+
+    def build(self):
         self.__insert_function_patterns()
-
         codewords = self.__Codewords()
         codewords.append(bytearray([self.__mode]), 4)
-        codewords.append(bytearray([len(data)]), self.__get_character_count_length())
-        codewords.append(bytearray(data.encode(encoding="ascii")), len(data) * 8)
+        codewords.append(bytearray([len(self.data)]), self.__get_character_count_length())
+        codewords.append(bytearray(self.data.encode(encoding="ascii")), len(self.data) * 8)
         codewords.pad_bytes(self.__get_capacity() - self.__get_eccw_count())
         codewords.append(self.__get_error_correction_codewords(codewords, self.__get_capacity()),
                          self.__get_eccw_count() * 8)
@@ -34,7 +85,9 @@ class QRCode:
             fill = self.__put_module(fill, 0)
 
         self.__apply_mask()
-        self.__insert_alignment_patterns()  #  TODO: think of a way to avoid masking it without redrawing
+        self.__insert_alignment_patterns()  # TODO: think of a way to avoid masking it without redrawing
+
+        return self.__matrix
 
     def __get_character_count_length(self):
         if self.__mode == 0b0001:  # numeric mode
@@ -57,25 +110,25 @@ class QRCode:
             for x in range(7):
                 for y in range(7):
                     if (1 <= x < 6 and 1 <= y < 6) and (x < 2 or x >= 5 or y < 2 or y >= 5):
-                        self.matrix[pos[0] + x][pos[1] + y] = 0
+                        self.__matrix[pos[0] + x][pos[1] + y] = 0
                     else:
-                        self.matrix[pos[0] + x][pos[1] + y] = 1
+                        self.__matrix[pos[0] + x][pos[1] + y] = 1
 
     def __insert_separators(self):
         for i in range(8):
-            self.matrix[i][7] = 0
-            self.matrix[7][i] = 0
+            self.__matrix[i][7] = 0
+            self.__matrix[7][i] = 0
 
-            self.matrix[i][self.get_width() - 7 - 1] = 0
-            self.matrix[7][self.get_width() - i - 1] = 0
+            self.__matrix[i][self.get_width() - 7 - 1] = 0
+            self.__matrix[7][self.get_width() - i - 1] = 0
 
-            self.matrix[self.get_width() - i - 1][7] = 0
-            self.matrix[self.get_width() - 7 - 1][i] = 0
+            self.__matrix[self.get_width() - i - 1][7] = 0
+            self.__matrix[self.get_width() - 7 - 1][i] = 0
 
     def __insert_timing_patterns(self):
         for i in range(8, self.get_width() - 7):
-            self.matrix[6][i] = (i + 1) % 2
-            self.matrix[i][6] = (i + 1) % 2
+            self.__matrix[6][i] = (i + 1) % 2
+            self.__matrix[i][6] = (i + 1) % 2
 
     def __insert_alignment_patterns(self):
         if self.__version == 1:
@@ -92,8 +145,8 @@ class QRCode:
                     continue
                 for i in range(-2, 3):
                     for j in range(-2, 3):
-                        self.matrix[5 + x * spacing + i][5 + y * spacing + j] = 1 if (
-                                    i == -2 or i == 2 or j == -2 or j == 2 or (i == 0 and j == 0)) else 0
+                        self.__matrix[5 + x * spacing + i][5 + y * spacing + j] = 1 if (
+                                i == -2 or i == 2 or j == -2 or j == 2 or (i == 0 and j == 0)) else 0
 
     def __insert_format_information(self):
         format_information = []
@@ -128,22 +181,22 @@ class QRCode:
 
         format_information.reverse()
         for i in range(6):
-            self.matrix[8][i] = format_information[i]
-            self.matrix[self.get_width() - 1 - i][8] = format_information[i]
+            self.__matrix[8][i] = format_information[i]
+            self.__matrix[self.get_width() - 1 - i][8] = format_information[i]
 
-        self.matrix[8][7] = format_information[6]
-        self.matrix[8][8] = format_information[7]
-        self.matrix[7][8] = format_information[8]
+        self.__matrix[8][7] = format_information[6]
+        self.__matrix[8][8] = format_information[7]
+        self.__matrix[7][8] = format_information[8]
 
-        self.matrix[self.get_width() - 1 - 6][8] = format_information[6]
-        self.matrix[self.get_width() - 1 - 7][8] = format_information[7]
-        self.matrix[8][self.get_width() - 1 - 6] = format_information[8]
+        self.__matrix[self.get_width() - 1 - 6][8] = format_information[6]
+        self.__matrix[self.get_width() - 1 - 7][8] = format_information[7]
+        self.__matrix[8][self.get_width() - 1 - 6] = format_information[8]
 
         for i in range(9, 15):
-            self.matrix[14 - i][8] = format_information[i]
-            self.matrix[8][self.get_width() - 1 - 14 + i] = format_information[i]
+            self.__matrix[14 - i][8] = format_information[i]
+            self.__matrix[8][self.get_width() - 1 - 14 + i] = format_information[i]
 
-        self.matrix[8][self.get_width() - 1 - 7] = 1
+        self.__matrix[8][self.get_width() - 1 - 7] = 1
 
     def __populate_matrix(self, codewords: self.__Codewords):
         ba = codewords.get_bytearray()
@@ -159,7 +212,8 @@ class QRCode:
                 value = (ba[B] << b & 128) >> 7
                 coords = self.__put_module(coords, value)
                 if coords is None:
-                    raise ValueError("Could not find a place to put a module. " + str(len(ba) - B) + "B " + str(8-b) + "b remaining." )
+                    raise ValueError("Could not find a place to put a module. " + str(len(ba) - B) + "B " + str(
+                        8 - b) + "b remaining.")
 
     def __put_module(self, coords: list, value: int):
         """
@@ -171,7 +225,7 @@ class QRCode:
         if not isinstance(coords, list) and len(coords) != 2:
             raise ValueError("coords must be a list of length two")
 
-        while self.matrix[coords[0]][coords[1]] is not None:
+        while self.__matrix[coords[0]][coords[1]] is not None:
             # 1 if up, -1 if down, and 0 if left
             direction = 1 - coords[0] % 2 if coords[0] < 6 else coords[0] % 2
             if direction != 0 and ((coords[0] - self.get_width() - 1) // 2) % 2 != 0:
@@ -188,7 +242,7 @@ class QRCode:
             if coords[0] < 0:
                 return None
 
-        self.matrix[coords[0]][coords[1]] = value
+        self.__matrix[coords[0]][coords[1]] = value
 
         return coords
 
@@ -199,7 +253,7 @@ class QRCode:
                 if x < 0 or x >= self.get_width() or y < 0 or y >= self.get_width():
                     out += "\x1b[107m \x1b[0m"
                     continue
-                val = self.matrix[x][y]
+                val = self.__matrix[x][y]
                 if val is None:
                     out += "?"  # this is purely for debugging purposes
                 elif val == 0:
@@ -289,10 +343,10 @@ class QRCode:
                 if self.__is_in_functional_patterns(j, i):
                     continue
                 if self.__mask_condition(i, j):
-                    if self.matrix[j][i] is None:
+                    if self.__matrix[j][i] is None:
                         continue
-                    self.matrix[j][i] += 1
-                    self.matrix[j][i] %= 2
+                    self.__matrix[j][i] += 1
+                    self.__matrix[j][i] %= 2
 
     def __mask_condition(self, i, j):
         match self.__mask:
@@ -412,6 +466,3 @@ class QRCode:
         degree = total_length - len(data_codewords.get_bytearray())
         message_poly = data_codewords.get_bytearray() + bytearray([0] * degree)
         return poly_rem(message_poly, get_generator_poly(degree))
-
-
-print(QRCode("Hello World!", 2, 0b0100))
