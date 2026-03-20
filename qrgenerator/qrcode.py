@@ -16,6 +16,11 @@ class QRCode:
         self.data = data
         self.__version = self.get_minimal_version()
         self.__matrix = [[None for _ in range(self.get_width())] for _ in range(self.get_width())]
+        if self.__version > 3:
+            raise NotImplementedError("QR of Version 4 and higher are not supported (yet)")
+
+    def get_version(self):
+        return self.__version
 
     def get_minimal_version(self):
         if self.__mode != 0b0100:
