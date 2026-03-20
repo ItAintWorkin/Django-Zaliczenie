@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "name": "runserver",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceRoot}/webapp/manage.py",
+            "args": ["runserver"]
+        }
+    ]
+}
