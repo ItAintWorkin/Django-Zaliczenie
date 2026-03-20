@@ -1,0 +1,31 @@
+{% include 'navbar.html' %}
+{% load static %}
+
+<title>QR Generator</title>
+
+<body>
+    <form class="poleqr" action="generator">
+        <div class="left">
+            <label for="poleqr" style="font-family: cursive;">Wpisz tekst</label>
+            <input type="text" name="text" id="text" class="pole_wpisywania">
+            <input type="submit" class="guzik_generator" value="Wygeneruj kod QR">
+        </div>
+        
+        <div class="right">
+            <label for="wynikqr" style="font-family: cursive;"></label>
+            <box>
+                <img src="data:image/jpeg;base64,{{img}}" style="width: 100%; height: 100%" >
+                {{error}}
+            </box>
+
+        </div>
+    </form>
+
+
+    <script>
+        const paramsString = window.location.search;
+        const searchParams = new URLSearchParams(paramsString);
+        document.getElementById("text").value = searchParams.get("text")
+
+    </script>
+</body>
