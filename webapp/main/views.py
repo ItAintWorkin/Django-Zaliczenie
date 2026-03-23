@@ -20,6 +20,9 @@ def generator(request):
 def yourqr(request):
     return render(request, "yourqr.html")
 
+def debug(request):
+    return render(request, "debug.html")
+
 def login(request):
     return render(request, "login.html")
 

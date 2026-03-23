@@ -1,0 +1,57 @@
+{% include 'navbar.html' %}
+{% load static %}
+
+<title>Analyze a QR code</title>
+
+<head>
+    <style>
+        td{
+            width: 10px;
+            height: 10px;
+        }
+        table{
+            background-color: grey;
+            border: black;
+        }
+    </style>
+</head>
+
+<body>
+    <form class="poleqr" action="generator">
+        <div class="left">
+            <input type="number" id="version">
+        </div>
+
+        <div class="right">
+            <table id="qr_table">
+
+            </table>
+        </div>
+    </form>
+
+
+    <script>
+        document.getElementById("version").addEventListener('input', function (evt) {
+            table = document.getElementById("qr_table")
+            table.innerHTML=""
+            for(let i=0;i<17+4*this.value;i++){
+                let row = table.insertRow()
+                for(let j=0;j<17+4*this.value;j++){
+                    row.insertCell()
+                }
+            }
+        });
+
+
+        const paramsString = window.location.search;
+        const searchParams = new URLSearchParams(paramsString);
+        qr = searchParams.get("qr")
+
+        function qr_to_table(qr_hex){
+            qr = Uint8Array.fromHex(qr_hex)
+                        width = Math.sqrt(qr_hex.length*8)
+            return width
+        }
+
+    </script>
+</body>
