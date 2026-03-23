@@ -1,5 +1,8 @@
 from django.shortcuts import render
-from qrgenerator.qrtoimg import get_base64
+
+import qrgenerator.export as export
+from qrgenerator.qrcode import QRCode
+
 
 # Create your views here.
 def home(request):
@@ -10,7 +13,7 @@ def generator(request):
     text = request.GET.get('text', 'https://youtu.be/dQw4w9WgXcQ')
     context = {}
     try:
-        context['img'] = get_base64(text)
+        context['img'] = export.as_jpg_base64(QRCode(text))
 
     except Exception as e:
         context['error'] = e
