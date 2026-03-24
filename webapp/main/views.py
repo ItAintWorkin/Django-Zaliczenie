@@ -1,3 +1,5 @@
+import traceback
+
 from django.shortcuts import render
 
 import qrgenerator.export as export
@@ -17,6 +19,7 @@ def generator(request):
 
     except Exception as e:
         context['error'] = e
+        print(traceback.format_exc())
 
     return render(request, "generator.html", context)
 

@@ -1,9 +1,4 @@
-ERROR_CORRECTION = {
-    'L': 0, 'l': 0,
-    'M': 1, 'm': 1,
-    'Q': 2, 'q': 2,
-    'H': 3, 'h': 3
-}
+from qrgenerator.tables_and_enums import *
 
 
 class QRCode:
@@ -11,8 +6,8 @@ class QRCode:
     def __init__(self, data: str):
 
         self.__mask = 2
-        self.__error_correction = ERROR_CORRECTION['M']
-        self.__mode = 0b0100  # 0b0100 represents byte mode TODO: implement other modes
+        self.__error_correction = ErrorCorrectionLevel.M
+        self.__mode = Mode.BYTE  # 0b0100 represents byte mode TODO: implement other modes
         self.data = data
         self.__version = self.get_minimal_version()
         self.__matrix = [[None for _ in range(self.get_width())] for _ in range(self.get_width())]
@@ -23,52 +18,10 @@ class QRCode:
         return self.__version
 
     def get_minimal_version(self):
-        if self.__mode != 0b0100:
+        if self.__mode != Mode.BYTE:
             raise NotImplementedError("can't get minimal version of modes different than byte(0b0100)")
-        TABLE_7_BYTE = [[],
-                        [17, 14, 11, 7],
-                        [32, 26, 20, 14],
-                        [53, 42, 32, 24],
-                        [78, 62, 46, 34],
-                        [106, 84, 60, 34],
-                        [134, 106, 74, 58],
-                        [154, 122, 86, 64],
-                        [192, 152, 108, 84],
-                        [230, 180, 130, 98],
-                        [271, 213, 151, 119],
-                        [321, 251, 177, 137],
-                        [367, 287, 203, 155],
-                        [425, 331, 241, 177],
-                        [458, 362, 258, 194],
-                        [520, 412, 292, 220],
-                        [586, 450, 322, 250],
-                        [644, 504, 364, 280],
-                        [718, 560, 394, 310],
-                        [792, 624, 442, 338],
-                        [858, 666, 482, 382],
-                        [929, 711, 509, 403],
-                        [1003, 779, 565, 439],
-                        [1091, 857, 611, 461],
-                        [1171, 911, 661, 511],
-                        [1273, 997, 715, 535],
-                        [1367, 1059, 751, 593],
-                        [1465, 1125, 805, 625],
-                        [1528, 1190, 868, 658],
-                        [1628, 1264, 908, 698],
-                        [1732, 1370, 982, 742],
-                        [1840, 1452, 1030, 790],
-                        [1952, 1538, 1112, 842],
-                        [2068, 1628, 1168, 898],
-                        [2188, 1722, 1228, 958],
-                        [2303, 1809, 1283, 983],
-                        [2431, 1911, 1351, 1051],
-                        [2563, 1989, 1423, 1093],
-                        [2699, 2099, 1499, 1139],
-                        [2809, 2213, 1579, 1219],
-                        [2953, 2331, 1663, 1273],
-                        ]
         for i in range(1, 7):
-            if len(self.data) < TABLE_7_BYTE[i][self.__error_correction]:
+            if len(self.data) < TABLE_7_BYTE[i][self.__error_correction.value]:
                 return i
         raise NotImplementedError(
             "qrcodes for version 7 and higher require Version Information (7.10) which is not implemented")
@@ -76,7 +29,7 @@ class QRCode:
     def build(self):
         self.__insert_function_patterns()
         codewords = self.__Codewords()
-        codewords.append(bytearray([self.__mode]), 4)
+        codewords.append(bytearray([self.__mode.value]), 4)
         codewords.append(bytearray([len(self.data)]), self.__get_character_count_length())
         codewords.append(bytearray(self.data.encode(encoding="ascii")), len(self.data) * 8)
         codewords.pad_bytes(self.__get_capacity() - self.__get_eccw_count())
@@ -95,13 +48,13 @@ class QRCode:
         return self.__matrix
 
     def __get_character_count_length(self):
-        if self.__mode == 0b0001:  # numeric mode
+        if self.__mode == Mode.NUMERIC:  # numeric mode
             return 10 if self.__version < 10 else 12 if self.__version < 27 else 14
-        if self.__mode == 0b0010:  # alphanumeric mode
+        if self.__mode == Mode.ALPHANUMERIC:  # alphanumeric mode
             return 9 if self.__version < 10 else 11 if self.__version < 27 else 13
-        if self.__mode == 0b0100:  # byte mode
+        if self.__mode == Mode.BYTE:  # byte mode
             return 8 if self.__version < 10 else 16
-        if self.__mode == 0b0010:  # kanji mode
+        if self.__mode == Mode.KANJI:  # kanji mode
             return 8 if self.__version < 10 else 10 if self.__version < 27 else 12
 
     def __insert_function_patterns(self):
@@ -155,19 +108,9 @@ class QRCode:
 
     def __insert_format_information(self):
         format_information = []
-        match self.__error_correction:
-            case 0:
-                format_information.append(0)
-                format_information.append(1)
-            case 1:
-                format_information.append(0)
-                format_information.append(0)
-            case 2:
-                format_information.append(1)
-                format_information.append(1)
-            case 3:
-                format_information.append(1)
-                format_information.append(0)
+        format_information.append(self.__error_correction.value>>1)
+        format_information.append(self.__error_correction.value&1)
+
         format_information.append((self.__mask >> 2) & 1)
         format_information.append((self.__mask >> 1) & 1)
         format_information.append((self.__mask) & 1)
@@ -271,59 +214,13 @@ class QRCode:
         return out
 
     def __get_capacity(self):
-        TABLE_9 = [0, 26, 44, 70, 100, 134, 172, 196, 242, 292, 346, 404, 466, 532, 581, 655, 733, 815, 901, 991, 1085,
-                   1156, 1258, 1364, 1474, 1588, 1706, 1828, 1921, 2051, 2185, 2323, 2465, 2611, 2761, 2876, 3034, 3196,
-                   3362, 3532, 3706]
-        return TABLE_9[self.__version]
+        return TOTAL_NUMBER_OF_CODEWORDS[self.__version]
 
     def __get_eccw_count(self):
         """
         :returns: Number of error correction codewords
         """
-        TABLE_9 = [
-            [],
-            [7, 10, 13, 17],
-            [10, 16, 22, 28],
-            [15, 26, 36, 44],
-            [20, 36, 52, 64],
-            [26, 48, 72, 88],
-            [36, 64, 96, 112],
-            [40, 72, 108, 130],
-            [48, 88, 132, 156],
-            [60, 110, 160, 192],
-            [72, 130, 192, 224],
-            [80, 150, 224, 264],
-            [96, 176, 260, 308],
-            [104, 198, 288, 352],
-            [120, 216, 320, 384],
-            [132, 240, 360, 432],
-            [144, 280, 408, 480],
-            [168, 308, 448, 532],
-            [180, 338, 504, 588],
-            [196, 364, 546, 650],
-            [224, 416, 600, 700],
-            [224, 442, 644, 750],
-            [252, 476, 690, 816],
-            [270, 504, 750, 900],
-            [300, 560, 810, 960],
-            [312, 588, 870, 1050],
-            [336, 644, 952, 1110],
-            [360, 700, 1020, 1200],
-            [390, 728, 1050, 1260],
-            [420, 784, 1140, 1350],
-            [450, 812, 1200, 1440],
-            [480, 868, 1290, 1530],
-            [510, 924, 1350, 1620],
-            [540, 980, 1440, 1710],
-            [570, 1036, 1530, 1800],
-            [570, 1064, 1590, 1890],
-            [600, 1120, 1680, 1980],
-            [630, 1204, 1770, 2100],
-            [660, 1260, 1860, 2220],
-            [720, 1316, 1950, 2310],
-            [750, 1372, 2040, 2430]
-        ]
-        return TABLE_9[self.__version][self.__error_correction]
+        return NUMBER_OF_EC_CODEWORDS[self.__version][self.__error_correction.value]
 
     def get_width(self):
         return 17 + 4 * self.__version
