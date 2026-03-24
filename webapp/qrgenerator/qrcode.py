@@ -244,30 +244,11 @@ class QRCode:
             for j in range(self.get_width()):
                 if self.__is_in_functional_patterns(j, i):
                     continue
-                if self.__mask_condition(i, j):
+                if MASKS[self.__mask](i, j):
                     if self.__matrix[j][i] is None:
                         continue
                     self.__matrix[j][i] += 1
                     self.__matrix[j][i] %= 2
-
-    def __mask_condition(self, i, j):
-        match self.__mask:
-            case 0:
-                return (i + j) % 2 == 0
-            case 1:
-                return i % 2 == 0
-            case 2:
-                return j % 3 == 0
-            case 3:
-                return (i + j) % 3 == 0
-            case 4:
-                return ((i // 2) + (j // 3)) % 2 == 0
-            case 5:
-                return (i * j) % 2 + (i * j) % 3 == 0
-            case 6:
-                return ((i * j) % 2 + (i * j) % 3) % 2 == 0
-            case 7:
-                return ((i + j) % 2 + (i * j) % 3) % 2 == 0
 
     class __Codewords:
 

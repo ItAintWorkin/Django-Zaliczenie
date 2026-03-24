@@ -109,3 +109,14 @@ class Mode(Enum):
     BYTE = 0b0100
     KANJI = 0b1000
     STRUCTURED_APPEND = 0b0011
+
+MASKS = [
+    lambda i, j : (i + j) % 2 == 0,
+    lambda i, j : i % 2 == 0,
+    lambda i, j : j % 3 == 0,
+    lambda i, j : (i + j) % 3 == 0,
+    lambda i, j : ((i // 2) + (j // 3)) % 2 == 0,
+    lambda i, j : (i * j) % 2 + (i * j) % 3 == 0,
+    lambda i, j : ((i * j) % 2 + (i * j) % 3) % 2 == 0,
+    lambda i, j : ((i + j) % 2 + (i * j) % 3) % 2 == 0
+]
