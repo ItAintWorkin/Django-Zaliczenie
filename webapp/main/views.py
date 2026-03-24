@@ -15,7 +15,10 @@ def generator(request):
     text = request.GET.get('text', 'https://youtu.be/dQw4w9WgXcQ')
     context = {}
     try:
-        context['img'] = export.as_jpg_base64(QRCode(text))
+        qr = QRCode()
+        qr["data"] = text
+        qr.update_matrix()
+        context['img'] = export.as_jpg_base64(qr)
 
     except Exception as e:
         context['error'] = e
