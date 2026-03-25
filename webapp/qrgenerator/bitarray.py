@@ -64,14 +64,14 @@ class Bitarray:
         return self.__bytearray
 
     def append(self, data: bytearray, length: int):
-        self.__shift_left(length)
+        self <<= length
         for i in range(length // 8):
             self.__bytearray[-(length // 8 - i)] = data[i]
         if length % 8 != 0:
             self.__bytearray[-length // 8] |= data[0]
 
     def pad_bits(self):
-        self.__shift_left((8 - (self.__length % 8)) % 8)
+        self <<= (8 - (self.__length % 8)) % 8
 
     def pad_bytes(self, total_bytes):
         pad_codewords = [bytearray([0b11101100]), bytearray([0b00010001])]
@@ -82,11 +82,11 @@ class Bitarray:
             self.append(pad_codewords[p % 2], 8)
             p += 1
 
-    def __shift_left(self, offset: int):
-        while len(self.__bytearray) * 8 < self.__length + offset:
+    def __ilshift__(self, other):
+        while len(self.__bytearray) * 8 < self.__length + other:
             self.__bytearray.insert(0, 0)
         for i in range(len(self)):
-            self[i-offset] = self[i]
+            self[i - other] = self[i]
             self[i] = 0
-        self.__length += offset
-        return self.__bytearray
+        self.__length += other
+        return self
