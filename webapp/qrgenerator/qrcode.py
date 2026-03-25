@@ -1,4 +1,5 @@
 from qrgenerator.tables_and_enums import *
+from qrgenerator.bitarray import Bitarray
 
 def get_minimal_version(mode: Mode, data: str, ecl: ErrorCorrectionLevel = ErrorCorrectionLevel.M):
     if mode != Mode.BYTE:
@@ -14,7 +15,7 @@ def update_matrix(qr: QRCode):
     qr["matrix"] = [[None for _ in range(qr.get_width())] for _ in range(qr.get_width())]
 
     __insert_function_patterns(qr)
-    codewords = __Codewords()
+    codewords = Bitarray()
     codewords.append(bytearray([qr["mode"].value]), 4)
     codewords.append(bytearray([len(qr["data"])]), __get_character_count_length(qr["mode"], qr["version"]))
     codewords.append(bytearray(qr["data"].encode(encoding="ascii")), len(qr["data"]) * 8)
@@ -131,7 +132,7 @@ def __insert_format_information(qr: QRCode):
 
     qr["matrix"][8][qr.get_width() - 1 - 7] = 1
 
-def __populate_matrix(qr: QRCode, codewords: __Codewords):
+def __populate_matrix(qr: QRCode, codewords: Bitarray):
     ba = codewords.get_bytearray()
     coords = [qr.get_width() - 1, qr.get_width() - 1]
 
@@ -226,60 +227,8 @@ def __apply_mask(qr: QRCode):
                 qr["matrix"][j][i] += 1
                 qr["matrix"][j][i] %= 2
 
-class __Codewords:
-
-    def __init__(self):
-        self.__bytearray = bytearray([0])
-        self.__length = 0
-
-    def __len__(self) -> int:
-        return self.__length
-
-    def get_bytearray(self):
-        return self.__bytearray
-
-    def append(self, data: bytearray, length: int):
-        self.__shift_left(length)
-        for i in range(length // 8):
-            self.__bytearray[-(length // 8 - i)] = data[i]
-        if length % 8 != 0:
-            self.__bytearray[-length // 8] |= data[0]
-
-    def pad_bits(self):
-        self.__shift_left((8 - (self.__length % 8)) % 8)
-
-    def pad_bytes(self, total_bytes):
-        pad_codewords = [bytearray([0b11101100]), bytearray([0b00010001])]
-        p = 0
-        if self.__length % 8 != 0:
-            self.pad_bits()
-        for i in range(self.__length // 8, total_bytes):
-            self.append(pad_codewords[p % 2], 8)
-            p += 1
-
-    def __shift_left(self, offset: int):
-        if offset == 0:
-            return self.__bytearray
-        orginal_length = len(self.__bytearray)
-        offset_B = offset // 8  # + (1 if offset % 8 != 0 else 0) # offset in bytes rounded up
-        while len(self.__bytearray) * 8 < self.__length + offset:
-            self.__bytearray.insert(0, 0)
-
-        for i in range(0, orginal_length):
-            self.__bytearray[i] = (self.__bytearray[i + offset_B] << (offset % 8)) & 255
-            if i + offset_B + 1 < orginal_length:
-                self.__bytearray[i] |= self.__bytearray[i + offset_B + 1] >> (8 - (offset % 8))
-        for i in range(orginal_length, len(self.__bytearray)):
-            self.__bytearray[i] = 0
-
-        self.__length += offset
-        return self.__bytearray
-
-    def __str__(self):
-        return self.__bytearray.hex()
-
 # https://dev.to/maxart2501/let-s-develop-a-qr-code-generator-part-iii-error-correction-1kbm
-def __get_error_correction_codewords(data_codewords: self.__Codewords, total_length):
+def __get_error_correction_codewords(data_codewords: self.Bitarray, total_length):
     GF = 0b100011101
 
     exp = [0] * 256
@@ -379,3 +328,7 @@ class QRCode(dict):
 
     def update_matrix(self):
         update_matrix(self)
+        # print(self["matrix"])
+        # print(Bitarray.from_boolean_matrix(self["matrix"]))
+        # print(Bitarray.from_boolean_matrix(self["matrix"]).to_boolean_matrix())
+        # self["matrix"]=Bitarray.from_boolean_matrix(self["matrix"]).to_boolean_matrix()
