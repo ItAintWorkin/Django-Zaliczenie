@@ -192,25 +192,25 @@ textarea {
     text-align: center;
 }
 
-
-/* -----register.html----- */
+/*
+-----register.html-----
 
 .register{
     min-height: 100vh;
-    background-color: white;
-    background-size: cover;
+    background-image: url(webapp\main\static\regback.png);
+    background-repeat: no-repeat;
+    background-size: 70%;
     background-attachment: fixed;
     background-position: right;
 }
-
 .txt_register{
     font-size: 12pt;
     text-align: center;
+    color: white;
 }
-
 .wrapper{
     box-sizing: border-box;
-    background-color: rgb(255, 206, 236);
+    background-color: #fff1fa;
     height: 100vh;
     width: max(40%, 600px);
     padding: 10px;
@@ -242,8 +242,8 @@ form label{
     flex-shrink: 0;
     height: 50px;
     width: 50px;
-    background-color: rgb(255, 176, 225);
-    fill: #FDE2DA;
+    background-color: #ffb0e1;
+    fill: #ffffff;
     border-radius: 10px 0 0 10px;
     display: flex;
     justify-content: center;
@@ -259,13 +259,13 @@ form input{
     padding: 1em;
     font: inherit;
     border-radius: 0 10px 10px 0;
-    border: rgb(255, 176, 225);
-    background-color: rgb(241, 221, 245);
+    border: #ffb0e1;
+    background-color: #ffe5f6;
     transition: 150ms;
 }
 form input:hover{
     border-left: none;
-    border: 2px solid rgb(255, 125, 205);
+    border: 2px solid #ffb0e1;
 }
 form input:focus{
     outline: none;
@@ -277,6 +277,10 @@ form button{
     border: none;
     border-radius: 1000px;
     padding: .85em 4em;
-    background-color: rgb(255, 125, 205);
-    color: #FDE2DA;
+    background-color: rgb(255, 176, 225);
+    color: #ffffff;
 }
+form button:hover{
+    background-color: rgb(255, 125, 205);
+}
+*/
