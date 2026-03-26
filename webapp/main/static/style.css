@@ -192,25 +192,20 @@ textarea {
     text-align: center;
 }
 
-/*
------register.html-----
+/* -----register.html----- */
 
 .register{
     min-height: 100vh;
-    background-image: url(webapp\main\static\regback.png);
-    background-repeat: no-repeat;
-    background-size: 70%;
-    background-attachment: fixed;
-    background-position: right;
+    background-color: #ffe5f6;
 }
 .txt_register{
     font-size: 12pt;
     text-align: center;
-    color: white;
+    color: rgb(252, 241, 241);
 }
 .wrapper{
     box-sizing: border-box;
-    background-color: #fff1fa;
+    background-color: #fffafd;
     height: 100vh;
     width: max(40%, 600px);
     padding: 10px;
@@ -219,12 +214,12 @@ textarea {
     align-items: center;
     justify-content: center;
 }
-h1{
+r1{
     font-size: 3rem;
     font-weight: 900;
     text-transform: uppercase;
 }
-form{
+.signup{
     width: min(400px, 100%);
     margin-top: 20px;
     margin-bottom: 50px;
@@ -233,17 +228,16 @@ form{
     align-items: center;
     gap: 10px;
 }
-form > div{
+.signup > div{
     width: 100%;
     display: flex;
     justify-content: center;
 }
-form label{
+.signup label{
     flex-shrink: 0;
     height: 50px;
     width: 50px;
     background-color: #ffb0e1;
-    fill: #ffffff;
     border-radius: 10px 0 0 10px;
     display: flex;
     justify-content: center;
@@ -251,7 +245,13 @@ form label{
     font-size: 1.5rem;
     font-weight: 500;
 }
-form input{
+.signup span{
+    color: #ffffff;
+}
+.signup svg{
+    fill: #ffffff;
+}
+.signup input{
     box-sizing: border-box;
     flex-grow: 1;
     min-width: 0;
@@ -263,14 +263,14 @@ form input{
     background-color: #ffe5f6;
     transition: 150ms;
 }
-form input:hover{
+.signup input:hover{
     border-left: none;
     border: 2px solid #ffb0e1;
 }
-form input:focus{
+.signup input:focus{
     outline: none;
 }
-form button{
+.signup button{
     font-size: 1rem;
     font-weight: 900;
     margin-top: 10px;
@@ -280,7 +280,6 @@ form button{
     background-color: rgb(255, 176, 225);
     color: #ffffff;
 }
-form button:hover{
+.signup button:hover{
     background-color: rgb(255, 125, 205);
 }
-*/
