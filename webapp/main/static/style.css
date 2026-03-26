@@ -191,3 +191,92 @@ textarea {
     cursor: pointer;
     text-align: center;
 }
+
+
+/* -----register.html----- */
+
+.register{
+    min-height: 100vh;
+    background-color: white;
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: right;
+}
+
+.txt_register{
+    font-size: 12pt;
+    text-align: center;
+}
+
+.wrapper{
+    box-sizing: border-box;
+    background-color: rgb(255, 206, 236);
+    height: 100vh;
+    width: max(40%, 600px);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+h1{
+    font-size: 3rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+form{
+    width: min(400px, 100%);
+    margin-top: 20px;
+    margin-bottom: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+form > div{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+form label{
+    flex-shrink: 0;
+    height: 50px;
+    width: 50px;
+    background-color: rgb(255, 176, 225);
+    fill: #FDE2DA;
+    border-radius: 10px 0 0 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+form input{
+    box-sizing: border-box;
+    flex-grow: 1;
+    min-width: 0;
+    height: 50px;
+    padding: 1em;
+    font: inherit;
+    border-radius: 0 10px 10px 0;
+    border: rgb(255, 176, 225);
+    background-color: rgb(241, 221, 245);
+    transition: 150ms;
+}
+form input:hover{
+    border-left: none;
+    border: 2px solid rgb(255, 125, 205);
+}
+form input:focus{
+    outline: none;
+}
+form button{
+    font-size: 1rem;
+    font-weight: 900;
+    margin-top: 10px;
+    border: none;
+    border-radius: 1000px;
+    padding: .85em 4em;
+    background-color: rgb(255, 125, 205);
+    color: #FDE2DA;
+}
