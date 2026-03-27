@@ -11,7 +11,7 @@
             background-color: white;
             border: 0;
         }
-        table{
+        #qr_table{
             background-color: grey;
             border-collapse: collapse;
             margin: auto;
@@ -26,14 +26,41 @@
             width: 100%;
             height: 220px;
         }
+        body:has(.functional:hover) .functional{
+            background-color: rgb(255, 242, 167);
+        }
+        body:has(.functional:hover) .functional.black{
+            background-color: rgb(100, 88, 0);
+        }
+        body:has(.mask:hover) .mask, body:has(.finfo_bch:hover) .mask{
+            background-color: rgb(255, 242, 167);
+        }
+        body:has(.mask:hover) .mask.black, body:has(.finfo_bch:hover) .mask.black{
+            background-color: rgb(100, 88, 0);
+        }
+        body:has(.ecl:hover) .ecl, body:has(.finfo_bch:hover) .ecl{
+            background-color: rgb(255, 242, 167);
+        }
+        body:has(.ecl:hover) .ecl.black, body:has(.finfo_bch:hover) .ecl.black{
+            background-color: rgb(100, 88, 0);
+        }
+        body:has(.mask:hover) .finfo_bch, body:has(.ecl:hover) .finfo_bch, body:has(.finfo_bch:hover) .finfo_bch{
+            background-color: rgb(138, 227, 255)
+        }
+        body:has(.mask:hover) .finfo_bch.black, body:has(.ecl:hover) .finfo_bch.black, body:has(.finfo_bch:hover) .finfo_bch.black{
+            background-color: rgb(2, 116, 142)
+        }
     </style>
 </head>
 
 <body>
     <form class="poleqr" action="generator">
         <div class="left">
-            <label for="version">Version: </label>
-            <input type="number" id="version">
+            <table>
+                <tr><td><label for="version" class="functional">Version: </label></td><td><input type="number" id="version"></td></tr>
+                <tr><td><label for="mask" class="mask">Mask: </label></td><td><input type="number" id="mask"></td></tr>
+                <tr><td><label for="ecl" class="ecl">ECL: </label></td><td><input type="number" id="ecl"></td></tr>
+            </table>
         </div>
 
         <div class="right">
@@ -75,6 +102,86 @@
             document.getElementById("version").value = (width-17)/4
             create_table(width)
             populate_table(qr_bytearray)
+            get_format_information(qr_bytearray)
+            label_funtional(qr_bytearray)
+        }
+
+        function get_format_information(qr_bytearray){
+            let cells = document.getElementById("qr_table").getElementsByTagName("td")
+            let width = document.getElementById("qr_table").getElementsByTagName("tr").length
+            let mask = neg_value_of(cells[8*width+2])*4+value_of(cells[8*width+2])*2+neg_value_of(cells[8*width+2])
+            document.getElementById("mask").value = mask
+            let ecl = neg_value_of(cells[8*width])*2+value_of(cells[8*width])
+            document.getElementById("ecl").value = ecl
+
+            cells[8*width+0].classList.add("ecl")
+            cells[8*width+1].classList.add("ecl")
+            cells[8*width+2].classList.add("mask")
+            cells[8*width+3].classList.add("mask")
+            cells[8*width+4].classList.add("mask")
+            cells[8*width+5].classList.add("finfo_bch")
+            cells[8*width+7].classList.add("finfo_bch")
+            cells[8*width+8].classList.add("finfo_bch")
+            cells[7*width+8].classList.add("finfo_bch")
+            cells[5*width+8].classList.add("finfo_bch")
+            cells[4*width+8].classList.add("finfo_bch")
+            cells[3*width+8].classList.add("finfo_bch")
+            cells[2*width+8].classList.add("finfo_bch")
+            cells[1*width+8].classList.add("finfo_bch")
+            cells[0*width+8].classList.add("finfo_bch")
+
+            cells[(width-1)*width+8].classList.add("ecl")
+            cells[(width-2)*width+8].classList.add("ecl")
+            cells[(width-3)*width+8].classList.add("mask")
+            cells[(width-4)*width+8].classList.add("mask")
+            cells[(width-5)*width+8].classList.add("mask")
+            cells[(width-6)*width+8].classList.add("finfo_bch")
+            cells[(width-7)*width+8].classList.add("finfo_bch")
+            cells[8*width+width-8].classList.add("finfo_bch")
+            cells[8*width+width-7].classList.add("finfo_bch")
+            cells[8*width+width-6].classList.add("finfo_bch")
+            cells[8*width+width-5].classList.add("finfo_bch")
+            cells[8*width+width-4].classList.add("finfo_bch")
+            cells[8*width+width-3].classList.add("finfo_bch")
+            cells[8*width+width-2].classList.add("finfo_bch")
+            cells[8*width+width-1].classList.add("finfo_bch")
+
+
+        }
+
+        function label_funtional(qr_bytearray){
+            let cells = document.getElementById("qr_table").getElementsByTagName("td")
+            let width = document.getElementById("qr_table").getElementsByTagName("tr").length
+
+            for (let y=0; y<8;y++){
+                for (let x=0; x<8;x++){
+                    cells[y*width+x].classList.add("functional")
+                    cells[(width-y-1)*width+x].classList.add("functional")
+                    cells[y*width+(width-x-1)].classList.add("functional")
+                }
+            }
+            for(let i=8;i<width-8;i++){
+                cells[6*width+i].classList.add("functional")
+                cells[i*width+6].classList.add("functional")
+            }
+        }
+
+        function value_of(cell){
+            if (cell.classList.contains("black")){
+                return true
+            }
+            if (cell.classList.contains("white")){
+                return false
+            }
+        }
+
+        function neg_value_of(cell){
+            if (cell.classList.contains("black")){
+                return false
+            }
+            if (cell.classList.contains("white")){
+                return true
+            }
         }
 
         qr_to_table(Uint8Array.fromHex(document.getElementById("qr_hex").textContent))
