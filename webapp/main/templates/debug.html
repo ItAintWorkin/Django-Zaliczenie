@@ -16,10 +16,10 @@
             border-collapse: collapse;
             margin: auto;
         }
-        .black{
+        .black, body:has(#mask_switch:checked) .masked.white{
             background-color: black;
         }
-        .white{
+        .white, body:has(#mask_switch:checked) .masked.black{
             background-color: white;
         }
         #qr_hex{
@@ -58,7 +58,10 @@
         <div class="left">
             <table>
                 <tr><td><label for="version" class="functional">Version: </label></td><td><input type="number" id="version"></td></tr>
-                <tr><td><label for="mask" class="mask">Mask: </label></td><td><input type="number" id="mask"></td></tr>
+                <tr>
+                    <td><label for="mask" class="mask">Mask: </label></td><td><input type="number" id="mask"></td>
+                    <td><label for="mask_switch" class="mask_switch">On?</label></td><td><input type="checkbox" id="mask_switch" checked></td></label></td>
+                </tr>
                 <tr><td><label for="ecl" class="ecl">ECL: </label></td><td><input type="number" id="ecl"></td></tr>
             </table>
         </div>
@@ -104,6 +107,7 @@
             populate_table(qr_bytearray)
             get_format_information(qr_bytearray)
             label_funtional(qr_bytearray)
+            demask(qr_bytearray)
         }
 
         function get_format_information(qr_bytearray){
@@ -184,7 +188,6 @@
                             for (let j=-2; j<3; j++){
                                 let r = 5 + y * spacing + j
                                 let c = 5 + x * spacing + i
-                                console.log(r + " " + c)
                                 cells[r*width+c].classList.add("functional")
                             }
                         }
@@ -196,6 +199,45 @@
 
         function get_version_from_width(width){
             return (width-17)/4
+        }
+
+        function demask(qt_bytearray){
+            let cells = document.getElementById("qr_table").getElementsByTagName("td")
+            let width = document.getElementById("qr_table").getElementsByTagName("tr").length
+            let mask = document.getElementById("mask").value
+            for (let i=0; i<width; i++){
+                for (let j=0; j<width; j++){
+                    let cell = cells[i*width + j] 
+                    if(cell.classList.contains("functional") || cell.classList.contains("ecl") || cell.classList.contains("mask") || cell.classList.contains("finfo_bch")){
+                        continue
+                    }
+                    let is_masked = false
+                    if (mask == 0 && (i + j) % 2 == 0) is_masked = true
+                    if (mask == 1 && i % 2 == 0) is_masked = true
+                    if (mask == 2 && j % 3 == 0)is_masked = true
+                    if (mask == 3 && (i + j) % 3 == 0)is_masked = true
+                    if (mask == 4 && (Math.floor(i / 2) + Math.floor(j / 3)) % 2 == 0)is_masked = true
+                    if (mask == 5 && (i * j) % 2 + (i * j) % 3 == 0)is_masked = true
+                    if (mask == 6 && ((i * j) % 2 + (i * j) % 3) % 2 == 0)is_masked = true
+                    if (mask == 7 && ((i + j) % 2 + (i * j) % 3) % 2 == 0)is_masked = true
+                    if (is_masked){
+                        cell.classList.add("masked")
+                        flip(cell)
+                    }
+                }
+            }
+            
+        }
+
+        function flip(cell){
+            if(cell.classList.contains("black")){
+                cell.classList.remove("black")
+                cell.classList.add("white")
+            }
+            else if(cell.classList.contains("white")){
+                cell.classList.add("black")
+                cell.classList.remove("white")
+            }
         }
 
         function value_of(cell){
