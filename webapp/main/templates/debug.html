@@ -152,6 +152,7 @@
         function label_funtional(qr_bytearray){
             let cells = document.getElementById("qr_table").getElementsByTagName("td")
             let width = document.getElementById("qr_table").getElementsByTagName("tr").length
+            let version = get_version_from_width(width)
 
             for (let y=0; y<8;y++){
                 for (let x=0; x<8;x++){
@@ -164,6 +165,37 @@
                 cells[6*width+i].classList.add("functional")
                 cells[i*width+6].classList.add("functional")
             }
+
+            if (version>1){
+                let grid_size = Math.floor(version / 7) + 2
+                let spacing = Math.floor((width - 12) / (grid_size - 1))
+                for (let x=0; x<grid_size; x++){
+                    for (let y=0; y<grid_size; y++){
+                        if (x == 0 && y == 0){
+                            continue
+                        }
+                        if (x == grid_size - 1 && y == 0){
+                            continue
+                        }
+                        if (x == 0 && y == grid_size - 1){
+                            continue
+                        }
+                        for (let i=-2; i<3; i++){
+                            for (let j=-2; j<3; j++){
+                                let r = 5 + y * spacing + j
+                                let c = 5 + x * spacing + i
+                                console.log(r + " " + c)
+                                cells[r*width+c].classList.add("functional")
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+
+        function get_version_from_width(width){
+            return (width-17)/4
         }
 
         function value_of(cell){
