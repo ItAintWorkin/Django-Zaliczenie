@@ -269,6 +269,7 @@ r1{
 }
 .signup input:focus{
     outline: none;
+    background-color: #ffc9ea;
 }
 .signup button{
     font-size: 1rem;
@@ -279,7 +280,13 @@ r1{
     padding: .85em 4em;
     background-color: rgb(255, 176, 225);
     color: #ffffff;
+    cursor: pointer;
 }
 .signup button:hover{
     background-color: rgb(255, 125, 205);
+}
+@media(max-width: 1100px){
+    .wrapper{
+        width: min(600px, 100%);
+    }
 }
