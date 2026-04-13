@@ -124,6 +124,19 @@
 
 .guzik_login:hover {
     background-color: #ff7dcd;
+}
+
+.guzik_logout { 
+    background-color: #ffb0e1;
+    padding: 10px;
+    border-radius: 12.69px;
+    display: inline-block;
+    transition: 0.4s;
+}
+
+.guzik_logout:hover {
+    background-color: #ff7dcd;
+}
 
 .guzik_register { 
     background-color: #ffb0e1;
