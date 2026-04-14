@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
+        call_command("makemigrations")
         call_command("migrate")
 
         if not User.objects.filter(username="admin").exists():
