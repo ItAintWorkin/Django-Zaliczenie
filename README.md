@@ -12,7 +12,7 @@ The website to easily generate QR codes.
 PyCharm will prepare the virtual environment for project automatically. For non-PyCharm users (for example VSCode) look an instructions below how to do this manually
 
 ## How to run local server
-Get to the `webapp` directory: `cd webapp` and run `python3 manage.py runserver` from webapp folder
+Get to the `webapp` directory: `cd webapp` run `python3 manage.py startup` and then run `python3 manage.py runserver` from webapp folder
 
 *In some enviroments it could be not `python3` but `python`* 
 
