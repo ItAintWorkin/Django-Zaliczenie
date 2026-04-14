@@ -15,6 +15,9 @@
                 <li><h2><a class ="underline-text" href = "{% url 'generator' %}">QR Generator</a></h2></li>
                 <li><h2><a class ="underline-text" href = "{% url 'yourqr' %}">Your QR's</a></h2></li>
                 <li><h2><a class ="underline-text" href = "{% url 'debug' %}">Analyze</a></h2></li>
+                {% if request.user.is_superuser %}
+                <li><h2><a class ="underline-text" href = "{% url 'all_qrs' %}">All users</a></h2></li>
+                {% endif %}
 
             </ul>
         </nav>
@@ -27,6 +30,7 @@
                             <h2>Logout</h2>
                         </a>
                     </li>
+
                 {% else %}
                     <li>
                         <a href="{% url 'login' %}" class= "guzik_login" style="text-decoration: none">
