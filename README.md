@@ -1,5 +1,5 @@
 # QR code generator
-The website to easily generate and save/download QR codes.
+A website to easily generate and save/download QR codes.
 
 ## Features:
 - generating QR codes from text and links for up to 41 characters
