@@ -93,7 +93,7 @@ def save_qr(request):
             image_base64=request.POST.get("img")
         )
 
-    return redirect("generator")
+    return redirect(f"/generator?text={request.POST.get('text')}")
 
 @login_required
 def delete_qr(request, qr_id):
