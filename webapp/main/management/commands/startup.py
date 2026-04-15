@@ -7,7 +7,7 @@ class Command(BaseCommand):
         call_command("makemigrations")
         call_command("migrate")
 
-        if not User.objects.filter(username="admin").exists():
+        if not User.objects.filter(username="admin1").exists():
             User.objects.create_superuser(
                 username="admin1",
                 email="admin@admin.com",
