@@ -51,7 +51,7 @@ Other accounts can be created via the register page.
 
 ## Description of project’s structure
 The project was built using the Django framework and is divided into the following components:                 
-# main
+### main
 Main system app, responsible for:
 - view handling (views)
 - models logic (models)
@@ -63,7 +63,7 @@ Additionally contains:
 - custom Django command (startup.py), which can automatically run operations when the project is started
 - static files (CSS, grafiki)
 - HTML templates
-# qrgenerator
+### qrgenerator
 Module responsible for creating QR codes:
 - qrcode.py – QR code generator
 - export.py  –  export / saving generated QR codes
