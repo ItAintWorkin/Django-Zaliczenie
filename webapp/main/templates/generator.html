@@ -34,10 +34,11 @@
 
                 <input type="hidden" name="text" value="{{ request.GET.text }}">
                 <input type="hidden" name="img" value="{{ img }}">
-
-                <button type="submit" style="background: none;border: none;cursor: pointer;text-decoration: underline;float:right;font-size: x-large;">
-                    Save QR
-                </button>
+                (% if user.is_authenticated %)
+                    <button type="submit" style="background: none;border: none;cursor: pointer;text-decoration: underline;float:right;font-size: x-large;">
+                        Save QR
+                    </button>
+                (% endif %)
             </form>
         {% endif %}
     </div>
