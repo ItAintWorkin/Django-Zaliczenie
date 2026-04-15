@@ -2,7 +2,41 @@
 {% load static %}
 
 <title>Your QR's</title>
+{% if user.is_authenticated %}
+    <h1 style="text-align: center; margin-top: 3%;">Your saved QR codes</h1>
 
-<body>
+    <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-left: 40px; margin-right: 40px; margin-top: 40px;">
+        {% for qr in qrs %}
+            <div style="border: 1px solid #ccc; padding: 10px; width: 200px;">
+                
+                <img src="data:image/jpeg;base64,{{ qr.image_base64 }}" style="width: 100%;">
 
-</body>    
+                <p style="overflow-wrap: break-word;">
+                    {% if qr.data %}
+                        {{ qr.data }}
+                    {% else %}
+                        --No input text--
+                    {% endif %}
+                </p>
+
+                <a href="data:image/jpeg;base64,{{ qr.image_base64 }}" download="qr.jpg">
+                    Download
+                </a>
+                <a href="{% url 'delete_qr' qr.id %}" onclick="return confirm('Do you want to delete this QR?')" style="color: red; display: block; margin-top: 10px;">
+                    Delete
+                </a>
+
+            </div>
+        {% empty %}
+            <a style>You don't have any saved QR codes yet.</a>
+        {% endfor %}
+    </div>
+{% else %}
+    <body>
+        <a>
+        <div class="login-popup">
+            <h2>You need to be logged in to use your QR's library</h2>
+            <a href="{% url 'login' %}" class="login-popup-link">Go to login</a>
+        </div>
+    </body>
+{% endif %}
