@@ -16,6 +16,8 @@ Get to the `webapp` directory: `cd webapp` and run `python3 manage.py runserver`
 
 *In some enviroments it could be not `python3` but `python`* 
 
+### Hot to set up a virtual environment and install dependencies (Linux):
+Run `setup_project.sh`
 
 ### How to set up a virtual environment:
 
