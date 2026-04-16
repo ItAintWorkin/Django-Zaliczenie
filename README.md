@@ -24,7 +24,7 @@ PyCharm will prepare the virtual environment for project automatically. For non-
 
 ## How to switch to a virtual environment in a terminal:
 
-Run `.venv\Scripts\Activate`. Then you will see (.venv) on the left from a CLI prompt
+Run `.venv\Scripts\activate`. Then you will see (.venv) on the left from a CLI prompt
 
 ## How to install all dependencies in an env:
 
