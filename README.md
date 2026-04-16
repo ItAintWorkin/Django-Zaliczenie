@@ -28,7 +28,7 @@ Run `.venv\Scripts\activate`. Then you will see (.venv) on the left from a CLI p
 
 ## How to install all dependencies in an env:
 
-`python -m pip install -r requirements.txt`
+`python3 -m pip install -r requirements.txt`
 
 For some Python versions installation might fail with ModuleNotFoundError: no module named 'distutils'. In that case necessary module can be obtained via command: `pip3 install setuptools`
 
@@ -61,7 +61,7 @@ Main system app, responsible for:
 
 Additionally contains:
 - custom Django command (startup.py), which can automatically run operations when the project is started
-- static files (CSS, grafiki)
+- static files (CSS, images)
 - HTML templates
 ### qrgenerator
 Module responsible for creating QR codes:
