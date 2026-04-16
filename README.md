@@ -2,7 +2,7 @@
 A website to easily generate and save/download QR codes.
 
 ## Features:
-- generating QR codes from text and links for up to 41 characters
+- generating QR codes from text and links for up to 41 characters with up to 15% of damage recovery capacity! 
 - library of saved QR codes (for logged in only)
 - option to download generated or saved QR code
 
