@@ -28,7 +28,7 @@ Run `.venv\Scripts\activate`. Then you will see (.venv) on the left from a CLI p
 
 ## How to install all dependencies in an env:
 
-`pip3 install -r requirements.txt`
+`python -m pip install -r requirements.txt`
 
 For some Python versions installation might fail with ModuleNotFoundError: no module named 'distutils'. In that case necessary module can be obtained via command: `pip3 install setuptools`
 
