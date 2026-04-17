@@ -68,5 +68,7 @@ Additionally contains:
 - HTML templates
 ### qrgenerator
 Module responsible for creating QR codes:
-- qrcode.py – QR code generator
+- qrcode.py – main logic of generator and serialization
 - export.py  –  export / saving generated QR codes
+- bitarray.py - class for manipulating individual bits in bytearray
+- tables_and_enums.py - constants from the specification extracted for clarity of code
