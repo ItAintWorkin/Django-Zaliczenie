@@ -41,18 +41,18 @@ Next get to the `webapp` directory: `cd webapp` and run `python3 manage.py start
 
 *In some enviroments it could be not `python3` but `python`* 
 
-## How to Quit the server :
+## How to Quit the server:
 
 Quit the server with CTRL-C in command line
 
 ## Admin account information:
 
-Login: admin1
-Password: admin1
-Other accounts can be created via the register page.
+- Login: admin1
+- Password: admin1
+- Other accounts can be created via the register page.
 
 
-## Description of project’s structure
+## Description of project’s structure:
 The project was built using the Django framework and is divided into the following components:                 
 ### main
 Main system app, responsible for:
@@ -66,7 +66,7 @@ Additionally contains:
 - custom Django command (startup.py), which can automatically run operations when the project is started
 - static files (CSS, images)
 - HTML templates
-### qrgenerator
+### qrgenerator:
 Module responsible for creating QR codes:
 - qrcode.py – main logic of generator and serialization
 - export.py  –  export / saving generated QR codes
