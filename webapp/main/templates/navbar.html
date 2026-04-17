@@ -3,7 +3,7 @@
 <div>
     <nav class = "navbar">
         <h1>
-            <a class = "logo" id = "logo" href="{% static 'logo.png' %}"> 
+            <a class = "logo" id = "logo" href="{% url 'home' %}"> 
             <img src="{% static 'logo.png' %}"  alt="Logo" style="height:50px; vertical-align: middle;">
             QRCG
             </a>
@@ -13,23 +13,37 @@
 
                 <li><h2><a class ="underline-text" href = "{% url 'home' %}">Home</a></h2></li> 
                 <li><h2><a class ="underline-text" href = "{% url 'generator' %}">QR Generator</a></h2></li>
-                <li><h2><a class ="underline-text" href = "{% url 'yourqr' %}">Your QR's</a></h2></li>
+                <li><h2><a class ="underline-text" href = "{% url 'yourqr' %}">Your QRs</a></h2></li>
+                <li><h2><a class ="underline-text" href = "{% url 'debug' %}">Analyze <sub>(alpha)</sub></a></h2></li>
+                {% if request.user.is_superuser %}
+                <li><h2><a class ="underline-text" href = "{% url 'all_qrs' %}">All users</a></h2></li>
+                {% endif %}
 
             </ul>
         </nav>
 
-        <nav class="sidebar_links">
-        <ul>
-            <li>
-                <a href="{% url 'login' %}" class= "guzik_login" style="text-decoration: none"><h2>Login</h2></a>
-            </li>
-            <li>
-                <a href="{% url 'register' %}" class= "guzik_register" style="text-decoration: none"><h2>Register</h2></a>
-            </li>
-        </ul>
+        <nav class="sidebar_links">        
+            <ul>
+                {% if user.is_authenticated %}
+                    <li>
+                        <a href="{% url 'logout' %}" class= "guzik_logout" style="text-decoration: none">
+                            <h2>Logout</h2>
+                        </a>
+                    </li>
+
+                {% else %}
+                    <li>
+                        <a href="{% url 'login' %}" class= "guzik_login" style="text-decoration: none">
+                            <h2>Login</h2>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'register' %}" class= "guzik_register" style="text-decoration: none">
+                            <h2>Sign Up</h2>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
         </nav>
     </nav>
 </div>
-
-
-<!-- czeba zrobic if user zalogowany nowy navbar -->
