@@ -7,7 +7,7 @@ from io import BytesIO
 def as_jpg_base64(qr: QRCode, module_size=16):
     img = Image.new("1", ((qr.get_width() + 8), (qr.get_width() + 8)), 1)
 
-    qr_matrix = qr.build()
+    qr_matrix = qr["matrix"]
     for x in range(qr.get_width()):
         for y in range(qr.get_width()):
             img.putpixel((x+4,y+4), 0 if qr_matrix[x][y] != 0 else 1)
@@ -21,7 +21,7 @@ def as_jpg_base64(qr: QRCode, module_size=16):
 
 def as_bytearray(qr: QRCode):
     array = bytearray()
-    qr_matrix = qr.build()
+    qr_matrix = qr["matrix"]
     byte_buffer = 0
     bit_count = 0
     i=0

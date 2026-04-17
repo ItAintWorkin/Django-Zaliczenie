@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import QRCode_save
+import traceback
 
 import qrgenerator.export as export
 from qrgenerator.qrcode import QRCode
@@ -19,10 +20,14 @@ def generator(request):
     text = request.GET.get('text', 'https://youtu.be/dQw4w9WgXcQ')
     context = {}
     try:
-        context['img'] = export.as_jpg_base64(QRCode(text))
+        qr = QRCode()
+        qr["data"] = text
+        qr.update_matrix()
+        context['img'] = export.as_jpg_base64(qr)
 
     except Exception as e:
         context['error'] = e
+        print(traceback.format_exc())
 
     return render(request, "generator.html", context)
 
