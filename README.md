@@ -1,8 +1,10 @@
 # QR code generator
 A website to easily generate and save/download QR codes.
 
+![The picture depicts a webpage to generate QR codes. On the left half is a text box labeled "Wpisz tekst" filled with the test "lorem ipsum". On the right side is the QR code corresponding to that input. Below the code is a clickable label "Download your QR". On the top of the webpage is the navigation bar with centered buttons: "Home", "QR Generator", "Your QRs", "Analyze (alpha)". On the far right of the nav bar are buttons: "Login" and "Sign Up". On the left side of the nav bar is a logo depicting dummy QR code behind portable electric generator. On the right of the logo is acronym "QRCG".](qr_generator.png "Preview of the generator webpage")
+
 ## Features:
-- generating QR codes from text and links for up to 41 characters
+- generating QR codes from text and links for up to 41 characters with up to 15% of damage recovery capacity! 
 - library of saved QR codes (for logged in only)
 - option to download generated or saved QR code
 
