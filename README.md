@@ -22,7 +22,8 @@ PyCharm will prepare the virtual environment for project automatically. For non-
 ## How to set up a virtual environment:
 
 
-`python3 -m venv .venv` and then select new environment in a VSCode (bottom-right corner)
+### Hot to set up a virtual environment and install dependencies (Linux):
+Run `setup_project.sh`
 
 ## How to switch to a virtual environment in a terminal:
 
