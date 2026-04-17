@@ -40,7 +40,7 @@ Next get to the `webapp` directory: `cd webapp` and run `python3 manage.py start
 
 *In some enviroments it could be not `python3` but `python`* 
 
-## How Quit the server :
+## How to Quit the server :
 
 Quit the server with CTRL-C in command line
 
