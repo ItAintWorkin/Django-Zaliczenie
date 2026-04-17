@@ -7,7 +7,7 @@
     <form class="poleqr" action="generator">
         <div class="left">
             <label for="poleqr" style="font-family: cursive;">Wpisz tekst</label>
-            <input type="text" name="text" id="text" class="pole_wpisywania">
+            <input type="text" name="text" id="text" class="pole_wpisywania" maxlength="41">
             <input type="submit" class="guzik_generator" value="Wygeneruj kod QR">
         </div>
         
@@ -15,12 +15,34 @@
             <label for="wynikqr" style="font-family: cursive;"></label>
             <box>
                 <img src="data:image/jpeg;base64,{{img}}" style="width: 100%; height: 100%" >
-                {{error}}
             </box>
-
+            <a>
+                {{error}}
+            </a>
         </div>
+        
     </form>
 
+    <div class="overlay">
+        {% if not error %}
+        
+            <a href="data:image/jpeg;base64,{{img}}" download="QR.jpg" style="font-size: x-large;">
+                Download your QR
+            </a>
+            <form method="POST" action="{% url 'save_qr' %}">
+                {% csrf_token %}
+
+                <input type="hidden" name="text" value="{{ request.GET.text }}">
+                <input type="hidden" name="img" value="{{ img }}">
+                {% if user.is_authenticated %}
+                    <button type="submit" style="background: none;border: none;cursor: pointer;text-decoration: underline;float:right;font-size: x-large;">
+                        Save QR
+                    </button>
+                {% endif %}
+            </form>
+        {% endif %}
+    </div>
+    
 
     <script>
         const paramsString = window.location.search;
