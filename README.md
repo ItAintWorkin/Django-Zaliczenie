@@ -15,35 +15,48 @@ A website to easily generate and save/download QR codes.
 - HTML / CSS
 - SQLite
 
-## Build instructions: 
+## Build instructions:
 
-PyCharm will prepare the virtual environment for project automatically. For non-PyCharm users (for example VSCode) look an instructions below how to do this manually
+Before first launch you need to follow steps below.
 
-## How to set up a virtual environment:
+### Automatic project setup (Linux):
 
+Run the `setup_project.sh` script before first launch.
 
-### Hot to set up a virtual environment and install dependencies (Linux):
-Run `setup_project.sh`
+### Manual setup:
 
-## How to switch to a virtual environment in a terminal:
-
-Run `.venv\Scripts\activate`. Then you will see (.venv) on the left from a CLI prompt
-
-## How to install all dependencies in an env:
-
-`python3 -m pip install -r requirements.txt`
-
-For some Python versions installation might fail with ModuleNotFoundError: no module named 'distutils'. In that case necessary module can be obtained via command: `pip3 install setuptools`
+Open terminal/command prompt in the project's root directory and run these commands: 
+```
+python3 -m venv .venv
+.venv\Scripts\activate
+python3 -m pip install -r requirements.txt
+cd webapp
+python3 manage.py startup
+```
 
 ## How to run local server:
 
-Next get to the `webapp` directory: `cd webapp` and run `python3 manage.py startup` for migrations and admin account creaction (only during the first launch) from webapp folder and after that run `python3 manage.py runserver` in the same folder
+### VS Code:
+Click F5 and run the `runserver` launch configuration.
+
+### PyCharm
+Run the `runserver` run configuration.
+
+### other/terminal
+On Linux - launch the `runserver.sh` script.
+
+On Windows - open project's root directory and run these commands:
+```
+.venv\Scripts\activate
+python3 webapp\manage.py runserver
+```
 
 *In some enviroments it could be not `python3` but `python`* 
 
 ## How to Quit the server:
 
-Quit the server with CTRL-C in command line
+Quit the server with CTRL-C in command line.
+If the server was started using launch configuration for PyCharm or VSCode you can close the server by clicking the red square symbol.  
 
 ## Admin account information:
 

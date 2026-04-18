@@ -1,5 +1,8 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 python3 -m venv .venv
 source ./.venv/bin/activate
 pip3 install -r requirements.txt
+cd webapp
+python3 manage.py startup
+cd ..
