@@ -14,7 +14,6 @@
                 <li><h2><a class ="underline-text" href = "{% url 'home' %}">Home</a></h2></li> 
                 <li><h2><a class ="underline-text" href = "{% url 'generator' %}">QR Generator</a></h2></li>
                 <li><h2><a class ="underline-text" href = "{% url 'yourqr' %}">Your QRs</a></h2></li>
-                <li><h2><a class ="underline-text" href = "{% url 'debug' %}">Analyze <sub>(alpha)</sub></a></h2></li>
                 {% if request.user.is_superuser %}
                 <li><h2><a class ="underline-text" href = "{% url 'all_qrs' %}">All users</a></h2></li>
                 {% endif %}
