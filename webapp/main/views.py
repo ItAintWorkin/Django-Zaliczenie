@@ -39,9 +39,6 @@ def yourqr(request):
     qrs = QRCode_save.objects.filter(user=request.user).order_by('-id')
     return render(request, "yourqr.html", {"qrs": qrs})
 
-def debug(request):
-    return render(request, "debug.html")
-
 def register(request):
 
     if request.method == "POST":
