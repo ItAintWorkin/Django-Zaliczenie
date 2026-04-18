@@ -1,6 +1,8 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 python3 -m venv .venv
 source ./.venv/bin/activate
 pip3 install -r requirements.txt
-python3 ./webapp/manage.py migrate
+cd webapp
+python3 manage.py migrate
+cd ..
