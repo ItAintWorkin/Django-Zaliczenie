@@ -49,5 +49,9 @@
         const searchParams = new URLSearchParams(paramsString);
         document.getElementById("text").value = searchParams.get("text")
 
+        if (!searchParams.has("text")){
+            document.getElementsByClassName("right")[0].style.display = "None"
+            document.getElementsByClassName("overlay")[0].style.display = "None"
+        }
     </script>
 </body>
